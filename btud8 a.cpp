@@ -16,7 +16,7 @@ void timMangNghichThe(int A[], int B[], int N) {
 int main() {
     int A[] = {5, 9, 1, 8, 2, 6, 4, 7, 3};
     int N = sizeof(A) / sizeof(A[0]);
-    int B[N]; // Mảng kết quả
+    int B[N];
 
     timMangNghichThe(A, B, N);
 

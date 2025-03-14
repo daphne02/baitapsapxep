@@ -6,24 +6,25 @@
 
 using namespace std;
 
+const int MAX_SV = 100; // Giả sử tối đa 100 sinh viên
+
 struct SinhVien {
     int maSo;
-    char hoVaDem[21]; 
-    char ten[41]; 
+    string hoVaDem;
+    string ten;
     int ngaySinh;
     int thangSinh;
     int namSinh;
-    char phai[4];
+    string phai;
     float diemTB;
 };
 
-// Nhập thông tin sinh viên vào mảng
-void nhapSinhVien(SinhVien &sv, SinhVien danhSach[], int n) {
+void nhapSinhVien(SinhVien &sv, SinhVien danhSach[], int &soLuong) {
     while (true) {
         cout << "Nhập mã số sinh viên: ";
         cin >> sv.maSo;
         bool trungMa = false;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < soLuong; i++) {
             if (danhSach[i].maSo == sv.maSo) {
                 trungMa = true;
                 break;
@@ -34,10 +35,12 @@ void nhapSinhVien(SinhVien &sv, SinhVien danhSach[], int n) {
     }
     cin.ignore();
     cout << "Nhập họ và đệm (tối đa 20 ký tự): ";
-    cin.getline(sv.hoVaDem, 21);
+    getline(cin, sv.hoVaDem);
+    if (sv.hoVaDem.length() > 20) sv.hoVaDem = sv.hoVaDem.substr(0, 20);
     
     cout << "Nhập tên sinh viên (tối đa 40 ký tự): ";
-    cin.getline(sv.ten, 41);
+    getline(cin, sv.ten);
+    if (sv.ten.length() > 40) sv.ten = sv.ten.substr(0, 40);
     
     cout << "Nhập ngày sinh: "; cin >> sv.ngaySinh;
     cout << "Nhập tháng sinh: "; cin >> sv.thangSinh;
@@ -46,7 +49,7 @@ void nhapSinhVien(SinhVien &sv, SinhVien danhSach[], int n) {
     do {
         cout << "Nhập phái (Nam/Nữ): ";
         cin >> sv.phai;
-    } while (string(sv.phai) != "Nam" && string(sv.phai) != "Nữ");
+    } while (sv.phai != "Nam" && sv.phai != "Nữ");
     
     do {
         cout << "Nhập điểm trung bình (0.00 - 10.00): ";
@@ -54,69 +57,63 @@ void nhapSinhVien(SinhVien &sv, SinhVien danhSach[], int n) {
     } while (sv.diemTB < 0.00 || sv.diemTB > 10.00);
 }
 
-// Lưu dữ liệu vào file
-void luuSinhVien(const string &tenFile, SinhVien danhSach[], int n) {
+void luuSinhVien(const string &tenFile, SinhVien danhSach[], int soLuong) {
     ofstream file(tenFile, ios::binary);
     if (!file) {
         cout << "Không thể mở file để ghi dữ liệu!\n";
         return;
     }
-    file.write(reinterpret_cast<const char*>(danhSach), sizeof(SinhVien) * n);
+    file.write(reinterpret_cast<const char*>(danhSach), soLuong * sizeof(SinhVien));
     file.close();
     cout << "Dữ liệu sinh viên đã được lưu vào tập tin " << tenFile << "\n";
 }
 
-// Đọc dữ liệu từ file
 int docSinhVien(const string &tenFile, SinhVien danhSach[]) {
     ifstream file(tenFile, ios::binary);
     if (!file) {
         cout << "Không thể mở file để đọc dữ liệu!\n";
         return 0;
     }
-    int n = 0;
-    while (file.read(reinterpret_cast<char*>(&danhSach[n]), sizeof(SinhVien))) {
-        n++;
+    int soLuong = 0;
+    while (file.read(reinterpret_cast<char*>(&danhSach[soLuong]), sizeof(SinhVien))) {
+        soLuong++;
     }
     file.close();
-    return n;
+    return soLuong;
 }
 
-// In danh sách sinh viên
-void inDanhSach(SinhVien danhSach[], int n) {
+void inDanhSach(SinhVien danhSach[], int soLuong) {
     cout << "\nDanh sách sinh viên:\n";
     cout << left << setw(10) << "Mã số" << setw(25) << "Họ và đệm" << setw(15) << "Tên"
          << setw(10) << "Ngày sinh" << setw(10) << "Phái" << setw(10) << "Điểm TB" << endl;
     cout << string(80, '-') << endl;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < soLuong; i++) {
         cout << left << setw(10) << danhSach[i].maSo << setw(25) << danhSach[i].hoVaDem << setw(15) << danhSach[i].ten
              << setw(2) << danhSach[i].ngaySinh << "/" << setw(2) << danhSach[i].thangSinh << "/" << setw(4) << danhSach[i].namSinh
              << setw(10) << danhSach[i].phai << setw(10) << danhSach[i].diemTB << endl;
     }
 }
 
-// Sắp xếp danh sách sinh viên theo mã số tăng dần
-void sapXepDanhSach(SinhVien danhSach[], int n) {
-    sort(danhSach, danhSach + n, [](const SinhVien &a, const SinhVien &b) {
-        return a.maSo < b.maSo;
-    });
-}
-
 int main() {
-    SinhVien danhSach[100]; // Mảng tối đa 100 sinh viên
+    SinhVien danhSach[MAX_SV];
     int soLuong = 10;
     
     cout << "Nhập danh sách " << soLuong << " sinh viên:\n";
     for (int i = 0; i < soLuong; ++i) {
-        nhapSinhVien(danhSach[i], danhSach, i);
+        nhapSinhVien(danhSach[i], danhSach, soLuong);
     }
     
     luuSinhVien("SINHVIEN.DAT", danhSach, soLuong);
     
-    // Đọc dữ liệu từ file
+    // Đọc dữ liệu từ tập tin
     soLuong = docSinhVien("SINHVIEN.DAT", danhSach);
     
-    // Sắp xếp và in danh sách
-    sapXepDanhSach(danhSach, soLuong);
+    // Sắp xếp danh sách theo mã số sinh viên tăng dần
+    sort(danhSach, danhSach + soLuong, [](const SinhVien &a, const SinhVien &b) {
+        return a.maSo < b.maSo;
+    });
+    
+    // In danh sách đã sắp xếp
     inDanhSach(danhSach, soLuong);
     
     return 0;

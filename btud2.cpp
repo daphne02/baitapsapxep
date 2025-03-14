@@ -15,7 +15,7 @@ bool compareTerms(const Term &a, const Term &b) {
 }
 
 // Hàm hiển thị danh sách các số hạng
-void printTerms(const Term terms[], int size) {
+void printTerms(Term terms[], int size) {
     for (int i = 0; i < size; i++) {
         cout << terms[i].coefficient << "x^" << terms[i].exponent;
         if (i < size - 1) cout << " + ";
@@ -24,21 +24,20 @@ void printTerms(const Term terms[], int size) {
 }
 
 int main() {
-    // Khai báo mảng số hạng
+    // Khai báo danh sách số hạng dưới dạng mảng
     Term terms[] = {
         {3.2, 5}, {1.5, 2}, {4.1, 3}, {2.0, 4}, {5.0, 0}
     };
-
-    int size = sizeof(terms) / sizeof(terms[0]);  // Xác định số phần tử trong mảng
-
+    int size = sizeof(terms) / sizeof(terms[0]);
+    
     cout << "Dãy thức ban đầu:" << endl;
     printTerms(terms, size);
-
+    
     // Sắp xếp dãy thức theo bậc tăng dần
     sort(terms, terms + size, compareTerms);
-
+    
     cout << "Dãy thức sau khi sắp xếp:" << endl;
     printTerms(terms, size);
-
+    
     return 0;
 }
