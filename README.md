@@ -10,7 +10,7 @@ Các thuật toán sắp xếp như:
 + Merge Sort
 + Index Sort
 + Radix Sort
-Nhóm thành viên gồm:
+- Nhóm thành viên gồm:
 + Tăng Huệ Ý
 + Nguyễn Thị Yến Nhi
 + Phạm Thúy Ngân
